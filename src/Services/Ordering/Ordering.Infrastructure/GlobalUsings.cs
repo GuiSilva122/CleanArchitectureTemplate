@@ -1,0 +1,12 @@
+﻿global using System.Data;
+global using MediatR;
+global using Microsoft.EntityFrameworkCore;
+global using Microsoft.EntityFrameworkCore.Design;
+global using Microsoft.EntityFrameworkCore.Metadata.Builders;
+global using Microsoft.EntityFrameworkCore.Storage;
+global using CleanArchitectureTemplate.Services.Ordering.Domain.AggregatesModel.BuyerAggregate;
+global using CleanArchitectureTemplate.Services.Ordering.Domain.AggregatesModel.OrderAggregate;
+global using CleanArchitectureTemplate.Services.Ordering.Domain.Exceptions;
+global using CleanArchitectureTemplate.Services.Ordering.Domain.Seedwork;
+global using CleanArchitectureTemplate.Services.Ordering.Infrastructure.EntityConfigurations;
+global using CleanArchitectureTemplate.Services.Ordering.Infrastructure.Idempotency;
