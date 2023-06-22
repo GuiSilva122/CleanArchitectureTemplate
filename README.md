@@ -4,7 +4,7 @@ Sample .NET Core reference application is powered by Microsoft, based on a simpl
 
 ## Getting Started
 
-Make sure you have [installed](https://docs.docker.com/docker-for-windows/install/) and [configured](https://github.com/dotnet-architecture/eShopOnContainers/wiki/Windows-setup#configure-docker) docker in your environment.
+Make sure you have [installed](https://docs.docker.com/docker-for-windows/install/) and configured docker in your environment.
 
 ```powershell
 docker-compose build
