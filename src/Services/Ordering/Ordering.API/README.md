@@ -1,6 +1,6 @@
 # Orders Microservice
 
-This is the Orders Microservices, this whole project is based on the eShopOnContainers which is powered by Microsoft, based on a simplified microservices architecture and Docker containers.
+This is the Orders microservice, this whole project is based on the eShopOnContainers which is powered by Microsoft, based on a simplified microservices architecture and Docker containers.
 
 ## Getting Started
 
