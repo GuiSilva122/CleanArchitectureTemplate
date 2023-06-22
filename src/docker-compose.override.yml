@@ -39,3 +39,6 @@ services:
     ports:
       - "5102:80"
       - "9102:81"
+volumes:
+  eshop-sqldata:
+    external: false
