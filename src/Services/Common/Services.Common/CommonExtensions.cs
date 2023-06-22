@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using CleanArchitectureTemplate.BuildingBlocks.EventBus;
 using CleanArchitectureTemplate.BuildingBlocks.EventBus.Abstractions;
-//using CleanArchitectureTemplate.BuildingBlocks.EventBusRabbitMQ;
+using CleanArchitectureTemplate.BuildingBlocks.EventBusRabbitMQ;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
@@ -367,64 +367,44 @@ public static class CommonExtensions
             return services;
         }
 
-        //if (string.Equals(eventBusSection["ProviderName"], "ServiceBus", StringComparison.OrdinalIgnoreCase))
-        //{
-        //    services.AddSingleton<IServiceBusPersisterConnection>(sp =>
-        //    {
-        //        var serviceBusConnectionString = configuration.GetRequiredConnectionString("EventBus");
+        if (string.Equals(eventBusSection["ProviderName"], "RabbitMQ", StringComparison.OrdinalIgnoreCase))
+        {
+            services.AddSingleton<IRabbitMQPersistentConnection>(sp =>
+            {
+                var logger = sp.GetRequiredService<ILogger<DefaultRabbitMQPersistentConnection>>();
 
-        //        return new DefaultServiceBusPersisterConnection(serviceBusConnectionString);
-        //    });
+                var factory = new ConnectionFactory()
+                {
+                    HostName = configuration.GetRequiredConnectionString("EventBus"),
+                    DispatchConsumersAsync = true
+                };
 
-        //    services.AddSingleton<IEventBus, EventBusServiceBus>(sp =>
-        //    {
-        //        var serviceBusPersisterConnection = sp.GetRequiredService<IServiceBusPersisterConnection>();
-        //        var logger = sp.GetRequiredService<ILogger<EventBusServiceBus>>();
-        //        var eventBusSubscriptionsManager = sp.GetRequiredService<IEventBusSubscriptionsManager>();
-        //        string subscriptionName = eventBusSection.GetRequiredValue("SubscriptionClientName");
+                if (!string.IsNullOrEmpty(eventBusSection["UserName"]))
+                {
+                    factory.UserName = eventBusSection["UserName"];
+                }
 
-        //        return new EventBusServiceBus(serviceBusPersisterConnection, logger,
-        //            eventBusSubscriptionsManager, sp, subscriptionName);
-        //    });
-        //}
-        //else
-        //{
-        //    services.AddSingleton<IRabbitMQPersistentConnection>(sp =>
-        //    {
-        //        var logger = sp.GetRequiredService<ILogger<DefaultRabbitMQPersistentConnection>>();
+                if (!string.IsNullOrEmpty(eventBusSection["Password"]))
+                {
+                    factory.Password = eventBusSection["Password"];
+                }
 
-        //        var factory = new ConnectionFactory()
-        //        {
-        //            HostName = configuration.GetRequiredConnectionString("EventBus"),
-        //            DispatchConsumersAsync = true
-        //        };
+                var retryCount = eventBusSection.GetValue("RetryCount", 5);
 
-        //        if (!string.IsNullOrEmpty(eventBusSection["UserName"]))
-        //        {
-        //            factory.UserName = eventBusSection["UserName"];
-        //        }
+                return new DefaultRabbitMQPersistentConnection(factory, logger, retryCount);
+            });
 
-        //        if (!string.IsNullOrEmpty(eventBusSection["Password"]))
-        //        {
-        //            factory.Password = eventBusSection["Password"];
-        //        }
+            services.AddSingleton<IEventBus, EventBusRabbitMQ>(sp =>
+            {
+                var subscriptionClientName = eventBusSection.GetRequiredValue("SubscriptionClientName");
+                var rabbitMQPersistentConnection = sp.GetRequiredService<IRabbitMQPersistentConnection>();
+                var logger = sp.GetRequiredService<ILogger<EventBusRabbitMQ>>();
+                var eventBusSubscriptionsManager = sp.GetRequiredService<IEventBusSubscriptionsManager>();
+                var retryCount = eventBusSection.GetValue("RetryCount", 5);
 
-        //        var retryCount = eventBusSection.GetValue("RetryCount", 5);
-
-        //        return new DefaultRabbitMQPersistentConnection(factory, logger, retryCount);
-        //    });
-
-        //    services.AddSingleton<IEventBus, EventBusRabbitMQ>(sp =>
-        //    {
-        //        var subscriptionClientName = eventBusSection.GetRequiredValue("SubscriptionClientName");
-        //        var rabbitMQPersistentConnection = sp.GetRequiredService<IRabbitMQPersistentConnection>();
-        //        var logger = sp.GetRequiredService<ILogger<EventBusRabbitMQ>>();
-        //        var eventBusSubscriptionsManager = sp.GetRequiredService<IEventBusSubscriptionsManager>();
-        //        var retryCount = eventBusSection.GetValue("RetryCount", 5);
-
-        //        return new EventBusRabbitMQ(rabbitMQPersistentConnection, logger, sp, eventBusSubscriptionsManager, subscriptionClientName, retryCount);
-        //    });
-        //}
+                return new EventBusRabbitMQ(rabbitMQPersistentConnection, logger, sp, eventBusSubscriptionsManager, subscriptionClientName, retryCount);
+            });
+        }
 
         services.AddSingleton<IEventBusSubscriptionsManager, InMemoryEventBusSubscriptionsManager>();
         return services;
