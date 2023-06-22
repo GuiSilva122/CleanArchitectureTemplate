@@ -1,0 +1,41 @@
+version: '3.4'
+
+services:
+  sqldata:
+    environment:
+      - SA_PASSWORD=Pass@word
+      - ACCEPT_EULA=Y
+    ports:
+      - "5433:1433"
+    volumes:
+      - eshop-sqldata:/var/opt/mssql
+
+  rabbitmq:
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+
+  ordering.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - Kestrel__Endpoints__HTTP__Url=http://0.0.0.0:80
+      - Kestrel__Endpoints__GRPC__Url=http://0.0.0.0:81
+      - Kestrel__Endpoints__GRPC__Protocols=Http2
+      - ConnectionStrings__OrderingDb=${ESHOP_AZURE_ORDERING_DB:-Server=sqldata;Database=Microsoft.eShopOnContainers.Services.OrderingDb;User Id=sa;Password=Pass@word;Encrypt=False;TrustServerCertificate=true}
+      - ConnectionStrings__EventBus=${ESHOP_AZURE_SERVICE_BUS:-rabbitmq}
+      - Identity__Url=http://identity-api
+      - Identity__ExternalUrl=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5105
+      - EventBus__UserName=${ESHOP_SERVICE_BUS_USERNAME}
+      - EventBus__Password=${ESHOP_SERVICE_BUS_PASSWORD}
+      - UseCustomizationData=True
+      - AzureServiceBusEnabled=False
+      - CheckUpdateTime=30000
+      - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
+      - OrchestratorType=${ORCHESTRATOR_TYPE}
+      - UseLoadTest=${USE_LOADTEST:-False}
+      - PATH_BASE=/ordering-api
+      - GRPC_PORT=81
+      - PORT=80
+    ports:
+      - "5102:80"
+      - "9102:81"

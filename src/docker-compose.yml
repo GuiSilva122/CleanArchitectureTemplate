@@ -1,0 +1,18 @@
+version: '3.4'
+
+services:
+
+  sqldata:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+
+  ordering.api:
+    image: ${DOCKER_REGISTRY-}orderingapi
+    build:
+      context: .
+      dockerfile: Services/Ordering/Ordering.API/Dockerfile
+    depends_on:
+      - sqldata
+      - rabbitmq
