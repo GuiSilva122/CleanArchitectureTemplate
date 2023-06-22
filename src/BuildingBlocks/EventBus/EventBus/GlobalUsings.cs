@@ -1,0 +1,4 @@
+﻿global using System.Text.Json.Serialization;
+global using CleanArchitectureTemplate.BuildingBlocks.EventBus.Abstractions;
+global using CleanArchitectureTemplate.BuildingBlocks.EventBus.Events;
+global using static CleanArchitectureTemplate.BuildingBlocks.EventBus.InMemoryEventBusSubscriptionsManager;
