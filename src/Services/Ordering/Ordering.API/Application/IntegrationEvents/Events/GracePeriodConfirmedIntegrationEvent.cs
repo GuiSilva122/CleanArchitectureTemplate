@@ -1,6 +1,4 @@
-﻿using CleanArchitectureTemplate.BuildingBlocks.EventBus.Events;
-
-namespace CleanArchitectureTemplate.Services.Ordering.API.Application.IntegrationEvents.Events;
+﻿namespace CleanArchitectureTemplate.Services.Ordering.API.Application.IntegrationEvents.Events;
 
 public record GracePeriodConfirmedIntegrationEvent : IntegrationEvent
 {

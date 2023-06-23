@@ -1,6 +1,4 @@
-﻿using CleanArchitectureTemplate.BuildingBlocks.EventBus.Abstractions;
-
-namespace CleanArchitectureTemplate.Services.Ordering.API.Application.IntegrationEvents.EventHandling;
+﻿namespace CleanArchitectureTemplate.Services.Ordering.API.Application.IntegrationEvents.EventHandling;
 
 public class UserCheckoutAcceptedIntegrationEventHandler : IIntegrationEventHandler<UserCheckoutAcceptedIntegrationEvent>
 {

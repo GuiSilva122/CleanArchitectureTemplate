@@ -1,11 +1,4 @@
-﻿using CleanArchitectureTemplate.BuildingBlocks.EventBus.Abstractions;
-using CleanArchitectureTemplate.BuildingBlocks.EventBus.Events;
-using CleanArchitectureTemplate.BuildingBlocks.IntegrationEventLogEF;
-using CleanArchitectureTemplate.BuildingBlocks.IntegrationEventLogEF.Services;
-using CleanArchitectureTemplate.Services.Ordering.Infrastructure;
-using Microsoft.EntityFrameworkCore;
-
-namespace CleanArchitectureTemplate.Services.Ordering.API.Application.IntegrationEvents;
+﻿namespace CleanArchitectureTemplate.Services.Ordering.API.Application.IntegrationEvents;
 
 public class OrderingIntegrationEventService : IOrderingIntegrationEventService
 {
